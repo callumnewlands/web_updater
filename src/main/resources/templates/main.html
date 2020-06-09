@@ -1,10 +1,34 @@
 <!DOCTYPE HTML>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <title>Getting Started: Serving Web Content</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+
 </head>
 <body>
-<p th:text="'Hello, ' + ${name} + '!'"></p>
+<table>
+    <tbody>
+    <tr>
+        <th>URL</th>
+        <th>Changed?</th>
+        <th>Any Errors?</th>
+    </tr>
+    <tr th:each="page: ${pages}">
+        <td th:text="${page.getURL()}"></td>
+        <td th:text="${page.getChanged()}"></td>
+        <td th:text="${!page.getErrors().isEmpty()}"></td>
+        <td>
+            <a th:href="@{/diff(url=${page.getURL()})}">Diff</a>
+        </td>
+        <td>
+            <form action="#" th:action="@{/ackChanges}" method="POST" th:object="${page}">
+                <button name="approve" value="approve">Ack</button>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+
 </body>
 </html>
