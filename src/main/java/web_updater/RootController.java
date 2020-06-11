@@ -34,19 +34,23 @@ public class RootController {
 
 	@GetMapping("diff")
 	public String getDiff(@RequestParam String url, Model model) {
+		// TODO better exception here, and Error template
 		model.addAttribute("page", pages.stream().filter(page -> page.getURL().equals(url)).findFirst().orElseThrow());
 		return "diff";
 	}
 
-	@PostMapping("ackChanges")
+	@PostMapping("ack-changes")
 	public RedirectView ackChanges(@ModelAttribute WebPage page) {
 		page.acknowledgeChanges();
 		return new RedirectView("");
 	}
 
-	private void addURLToWatchList(String url) {
+	// TODO UI for this
+	@PostMapping("add-watch")
+	private RedirectView addURLToWatchList(@RequestParam String url) {
+		// TODO add if not exists
 		pages.add(new WebPage(url));
-		checkForUpdates();
+		return new RedirectView("");
 	}
 
 	/**

@@ -44,7 +44,7 @@ public class WebPage {
 
 	private boolean hasChanged() {
 		if (oldPage == null) {
-			return false;
+			return false; // Watch has just been added for this page
 		}
 		return oldPage.hasSameValue(newPage);
 	}

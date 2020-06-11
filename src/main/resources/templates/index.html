@@ -30,7 +30,7 @@
                             <a th:href="@{/diff(url=${page.getURL()})}">Diff</a>
                         </td>
                         <td>
-                            <form action="#" th:action="@{/ackChanges}" method="POST" th:object="${page}">
+                            <form action="#" th:action="@{/ack-changes}" method="POST" th:object="${page}">
                                 <button name="approve" value="approve">Ack</button>
                             </form>
                         </td>
