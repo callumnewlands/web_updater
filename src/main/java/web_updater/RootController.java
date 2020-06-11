@@ -29,7 +29,7 @@ public class RootController {
 	public String getRoot(Model model) {
 		checkForUpdates();
 		model.addAttribute("pages", pages);
-		return "main";
+		return "index";
 	}
 
 	@GetMapping("diff")
