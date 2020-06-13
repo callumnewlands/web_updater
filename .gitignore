@@ -32,6 +32,3 @@ target
 # IDE files
 .idea
 *.iml
-
-# Credentials
-**/application.properties
