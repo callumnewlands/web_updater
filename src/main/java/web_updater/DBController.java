@@ -51,7 +51,9 @@ public class DBController {
 
 	@Transactional
 	public void setPageChanged(String url, boolean b) {
-		webPageRepository.setChangedByURL(b, url);
+		WebPage p = getPage(url);
+		p.setChanged(b);
+		webPageRepository.save(p);
 	}
 
 	public WebPage getPage(String url) {
@@ -60,7 +62,9 @@ public class DBController {
 
 	@Transactional
 	public void setPageOldHTML(String url, Document value) {
-		webPageRepository.setOldHTMLByURL(value, url);
+		WebPage p = getPage(url);
+		p.setOldHtml(value);
+		webPageRepository.save(p);
 	}
 
 	public void savePage(WebPage p) {

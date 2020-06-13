@@ -41,10 +41,7 @@ public class RootController {
 
 	@GetMapping("diff")
 	public String getDiff(@RequestParam String url, Model model) {
-		// TODO get from db lookup
-//		model.addAttribute("page", pages.stream()
-//				.filter(page -> page.getURL().equals(url))
-//				.findFirst().orElseThrow(() -> new ArrayIndexOutOfBoundsException("URL does not exist: " + url)));
+		model.addAttribute("page", dbController.getPage(url));
 		return "diff";
 	}
 

@@ -77,8 +77,8 @@ public class WebPage {
 				"URL='" + URL + '\'' +
 				", changed=" + changed +
 				", errors=" + errors +
-				", oldHtml=" + oldHtml.nodeName() + "..." +
-				", newHtml=" + newHtml.nodeName() + "..." +
+				", oldHtml=" + (oldHtml == null ? "null" : oldHtml.nodeName()) + "..." +
+				", newHtml=" + (newHtml == null ? "null" : newHtml.nodeName()) + "..." +
 				'}';
 	}
 }
