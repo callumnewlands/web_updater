@@ -1,5 +1,6 @@
 package web_updater;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Convert;
@@ -18,10 +19,10 @@ public class WebPage {
 	private List<Exception> errors = new ArrayList<>();
 	@Lob
 	@Convert(converter = JSoupDocumentConverter.class)
-	private Document oldPage = null;
+	private Document oldHtml = null;
 	@Lob
 	@Convert(converter = JSoupDocumentConverter.class)
-	private Document newPage;
+	private Document newHtml;
 
 	public WebPage() {
 	}
@@ -42,17 +43,43 @@ public class WebPage {
 		return changed;
 	}
 
+	public void setChanged(Boolean changed) {
+		this.changed = changed;
+	}
+
 	public List<Exception> getErrors() {
 		return errors;
 	}
 
-	public Document getOldHTML() {
-		return oldPage;
+	public Document getOldHtml() {
+		return oldHtml;
 	}
 
-	public Document getNewHTML() {
-		return newPage;
+	public Document getNewHtml() {
+		return newHtml;
 	}
 
+	public void setOldHtml(Document oldHtml) {
+		this.oldHtml = oldHtml;
+	}
+
+	public void setNewHtml(Document newHtml) {
+		this.newHtml = newHtml;
+	}
+
+	public void addError(IOException e) {
+		errors.add(e);
+	}
+
+	@Override
+	public String toString() {
+		return "WebPage{" +
+				"URL='" + URL + '\'' +
+				", changed=" + changed +
+				", errors=" + errors +
+				", oldHtml=" + oldHtml.nodeName() + "..." +
+				", newHtml=" + newHtml.nodeName() + "..." +
+				'}';
+	}
 }
 

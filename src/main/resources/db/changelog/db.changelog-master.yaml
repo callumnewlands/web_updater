@@ -21,10 +21,10 @@ databaseChangeLog:
                   name:  changed
                   type:  bool
               - column:
-                  name:  new_page
+                  name:  new_html
                   type:  longtext
               - column:
-                  name:  old_page
+                  name:  old_html
                   type:  longtext
         - createTable:
             tableName: web_page_errors

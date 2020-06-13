@@ -4,12 +4,14 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
+import javax.transaction.Transactional;
+import org.jsoup.nodes.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequestMapping(path = "/db")
@@ -28,12 +30,40 @@ public class DBController {
 		}
 	}
 
+	@GetMapping("/all")
+	public String getAllPagesPage(Model model) {
+		List<WebPage> pages = getAllPages();
+		pages.forEach(p -> {
+			if (p.getOldHtml() != null) {
+				p.getOldHtml().outputSettings().prettyPrint(true);
+			}
+			if (p.getNewHtml() != null) {
+				p.getNewHtml().outputSettings().prettyPrint(true);
+			}
+		});
+		model.addAttribute("pages", pages);
+		return "db_all";
+	}
 
-	@GetMapping(path = "/all")
-	public @ResponseBody
-	List<WebPage> getAllPages() {
-		// This returns a JSON or XML with the users
+	public List<WebPage> getAllPages() {
 		return webPageRepository.findAll();
 	}
 
+	@Transactional
+	public void setPageChanged(String url, boolean b) {
+		webPageRepository.setChangedByURL(b, url);
+	}
+
+	public WebPage getPage(String url) {
+		return webPageRepository.getOne(url);
+	}
+
+	@Transactional
+	public void setPageOldHTML(String url, Document value) {
+		webPageRepository.setOldHTMLByURL(value, url);
+	}
+
+	public void savePage(WebPage p) {
+		webPageRepository.save(p);
+	}
 }

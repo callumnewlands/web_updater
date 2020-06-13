@@ -1,7 +1,11 @@
 package web_updater;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
+import java.util.List;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
@@ -46,9 +50,10 @@ public class RootController {
 
 	@PostMapping("ack-changes")
 	public RedirectView ackChanges(@RequestParam String url) {
-		// TODO implement here:
-//		page.changed = false;
-//		page.oldPage = this.newPage;
+		dbController.setPageChanged(url, false);
+		WebPage page = dbController.getPage(url);
+		Document newHtml = page.getNewHtml();
+		dbController.setPageOldHTML(url, newHtml);
 		return new RedirectView("");
 	}
 
@@ -64,24 +69,22 @@ public class RootController {
 	@Scheduled(fixedRate = HOUR_MS)
 	@Async
 	public void checkForUpdates() {
-		System.out.println("Checking for Updates!");
-//		pages.forEach(WebPage::update);
 
-		// TODO implement here:
-//	void update() {
-//		try {
-//			newPage = Jsoup.connect(this.URL).get();
-//			if (oldPage == null) {
-//				this.changed = false;
-//				this.oldPage = this.newPage;
-//			} else {
-//				this.changed = oldPage.hasSameValue(newPage);
-//			}
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//			errors.add(e);
-//		}
-//	}
-//
+		List<WebPage> pages = dbController.getAllPages();
+
+		pages.forEach(p -> {
+			try {
+				p.setNewHtml(Jsoup.connect(p.getURL()).get());
+				if (p.getOldHtml() == null) {
+					ackChanges(p.getURL());
+				} else {
+					p.setChanged(p.getOldHtml().hasSameValue(p.getNewHtml()));
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+				p.addError(e);
+			}
+			dbController.savePage(p);
+		});
 	}
 }
