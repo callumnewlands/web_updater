@@ -1,0 +1,42 @@
+databaseChangeLog:
+  - preConditions:
+  - runningAs:
+      username:  liquibase
+
+  - changeSet:
+      id:  1
+      author:  callumnewlands
+      changes:
+        - createTable:
+            tableName:  web_page
+            columns:
+              - column:
+                  name:  url
+                  type:  varchar(255)
+                  constraints:
+                    primaryKey:  true
+                    nullable:  false
+                    primaryKeyName: pk_web_page_url
+              - column:
+                  name:  changed
+                  type:  bool
+              - column:
+                  name:  new_page
+                  type:  longtext
+              - column:
+                  name:  old_page
+                  type:  longtext
+        - createTable:
+            tableName: web_page_errors
+            columns:
+              - column:
+                  name:  web_page_url
+                  type:  varchar(255)
+                  constraints:
+                    nullable:  false
+                    foreignKeyName:  fk_web_page_url
+                    references:  web_page(url)
+              - column:
+                  name:  errors
+                  type:  blob
+

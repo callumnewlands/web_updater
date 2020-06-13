@@ -3,7 +3,7 @@
 <head th:replace="fragments :: head (${'Web Page Watcher'})"></head>
 <body>
 
-<div th:replace="fragments :: header ('Web Page Update Watcher 1.0')"></div>
+<div th:replace="fragments :: header"></div>
 
 <div class="container-fluid">
     <div class="row">
@@ -11,7 +11,7 @@
 
         <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
 
-            <h2 class="pt-3">Section title</h2>
+            <h2 class="pt-3">Dashboard</h2>
             <div class="table-responsive">
                 <table class="table table-striped table-sm">
                     <thead>
@@ -23,7 +23,9 @@
                     </thead>
                     <tbody>
                     <tr th:each="page: ${pages}">
-                        <td th:text="${page.getURL()}"></td>
+                        <td>
+                            <a th:href="${page.getURL()}" th:text="${page.getURL()}"></a>
+                        </td>
                         <td th:text="${page.getChanged()}"></td>
                         <td th:text="${page.getErrors().isEmpty() ? '-' : page.getErrors().size()}"></td>
                         <td>
@@ -38,6 +40,21 @@
                     </tbody>
                 </table>
             </div>
+
+            <form class="container" action="#" th:action="@{/add-watch}" method="POST">
+                <div class="form-row">
+                    <div class="col">
+                        Add New Watch:
+                    </div>
+                    <div class="col-6">
+                        <input type="text" class="form-control" placeholder="URL" name="url"/>
+                    </div>
+                    <div class="col-4">
+                        <button name="add" value="approve">Add</button>
+                    </div>
+                </div>
+            </form>
+
         </main>
     </div>
 </div>

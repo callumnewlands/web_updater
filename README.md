@@ -16,11 +16,17 @@ these tests include the following string in the commit message ```skip-ci```
 To run the resource watcher (watches src/main/resources for updates to html/css/js files and automatically copies them 
 to the target directory) run ```npm run watch``` in the project root directory
 
+## Rebuild the Project in IntelliJ IDEA
+After making changes to the code, ```Ctrl+F9``` will rebuild the application whilst it is running
+
 ## Running the Tests
 To run the unit tests for the application run ```mvn test``` in the project root directory
 
 ## Running the Application
 To run the application run ```mvn spring-boot:run``` project root directory
+
+## Heroku
+This app is currently available on Heroku at https://website-updater.herokuapp.com/
 
 ## Author
 Callum Newlands
