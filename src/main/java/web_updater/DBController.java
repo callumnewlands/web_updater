@@ -23,14 +23,15 @@ public class DBController {
 		new URL(url).toURI();
 
 		// TODO don't allow "localhost" or equivalent to be added
-		if (getAllURLs().stream().map(WebPage::getURL).noneMatch(s -> s.equals(url))) {
+		if (getAllPages().stream().map(WebPage::getURL).noneMatch(s -> s.equals(url))) {
 			webPageRepository.save(new WebPage(url));
 		}
 	}
 
+
 	@GetMapping(path = "/all")
 	public @ResponseBody
-	List<WebPage> getAllURLs() {
+	List<WebPage> getAllPages() {
 		// This returns a JSON or XML with the users
 		return webPageRepository.findAll();
 	}

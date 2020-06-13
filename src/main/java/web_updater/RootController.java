@@ -2,14 +2,11 @@ package web_updater;
 
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.List;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.view.RedirectView;
@@ -23,12 +20,10 @@ public class RootController {
 
 	private DBController dbController;
 
-	private List<WebPage> pages = new ArrayList<>();
-
 	public RootController(DBController dbController) {
 		this.dbController = dbController;
 		try {
-			addURLToWatchList("https://www.google.co.uk");
+			dbController.addURL("https://www.google.co.uk");
 		} catch (MalformedURLException | URISyntaxException ignore) {
 		}
 	}
@@ -36,28 +31,30 @@ public class RootController {
 	@GetMapping( {"", "/"})
 	public String getRoot(Model model) {
 		checkForUpdates();
-		model.addAttribute("pages", pages);
+		model.addAttribute("pages", dbController.getAllPages());
 		return "index";
 	}
 
 	@GetMapping("diff")
 	public String getDiff(@RequestParam String url, Model model) {
-		model.addAttribute("page", pages.stream()
-				.filter(page -> page.getURL().equals(url))
-				.findFirst().orElseThrow(() -> new ArrayIndexOutOfBoundsException("URL does not exist: " + url)));
+		// TODO get from db lookup
+//		model.addAttribute("page", pages.stream()
+//				.filter(page -> page.getURL().equals(url))
+//				.findFirst().orElseThrow(() -> new ArrayIndexOutOfBoundsException("URL does not exist: " + url)));
 		return "diff";
 	}
 
 	@PostMapping("ack-changes")
-	public RedirectView ackChanges(@ModelAttribute WebPage page) {
-		page.acknowledgeChanges();
+	public RedirectView ackChanges(@RequestParam String url) {
+		// TODO implement here:
+//		page.changed = false;
+//		page.oldPage = this.newPage;
 		return new RedirectView("");
 	}
 
 	@PostMapping("add-watch")
 	private RedirectView addURLToWatchList(@RequestParam String url) throws MalformedURLException, URISyntaxException {
 		dbController.addURL(url);
-
 		return new RedirectView("");
 	}
 
@@ -68,6 +65,23 @@ public class RootController {
 	@Async
 	public void checkForUpdates() {
 		System.out.println("Checking for Updates!");
-		pages.forEach(WebPage::update);
+//		pages.forEach(WebPage::update);
+
+		// TODO implement here:
+//	void update() {
+//		try {
+//			newPage = Jsoup.connect(this.URL).get();
+//			if (oldPage == null) {
+//				this.changed = false;
+//				this.oldPage = this.newPage;
+//			} else {
+//				this.changed = oldPage.hasSameValue(newPage);
+//			}
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//			errors.add(e);
+//		}
+//	}
+//
 	}
 }
