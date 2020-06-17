@@ -19,6 +19,8 @@
                         <th>URL</th>
                         <th>Changed?</th>
                         <th>Any Errors?</th>
+                        <th>See Diff's</th>
+                        <th>ACK Changes</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -26,14 +28,16 @@
                         <td>
                             <a th:href="${page.getURL()}" th:text="${page.getURL()}"></a>
                         </td>
-                        <td th:text="${page.getChanged()}"></td>
-                        <td th:text="${page.getErrors().isEmpty() ? '-' : page.getErrors().size()}"></td>
+                        <td th:class="${page.getChanged() ? 'table-warning' : ''}" th:text="${page.getChanged()}"></td>
+                        <td th:class="${!page.getErrors().isEmpty() ? 'table-danger' : ''}"
+                            th:text="${page.getErrors().isEmpty() ? '-' : page.getErrors().size()}"></td>
                         <td>
-                            <a th:href="@{/diff(url=${page.getURL()})}">Diff</a>
+                            <a type="button" class="btn btn-primary" th:href="@{/diff(url=${page.getURL()})}">Diff.</a>
                         </td>
                         <td>
                             <form action="#" th:action="@{/ack-changes(url=${page.getURL()})}" method="POST">
-                                <button name="approve" value="approve">Ack</button>
+                                <button type="submit" class="btn btn-primary" name="approve" value="approve">Ack.
+                                </button>
                             </form>
                         </td>
                     </tr>
@@ -41,19 +45,69 @@
                 </table>
             </div>
 
-            <form class="container" action="#" th:action="@{/add-watch}" method="POST">
-                <div class="form-row">
-                    <div class="col">
+            <script>
+                function toggleSecure(checkBox) {
+                    document.getElementById("stdSwitch").checked = checkBox.checked;
+                    document.getElementById("secureSwitch").checked = checkBox.checked;
+                    document.getElementById("stdUrlForm").hidden = checkBox.checked;
+                    document.getElementById("secureUrlForm").hidden = !checkBox.checked;
+                }
+            </script>
+
+            <form id="stdUrlForm" action="#" th:action="@{/add-watch}" th:object="${req}"
+                  method="POST">
+                <div class="form-row form-group">
+                    <div class="col-sm-2">
                         Add New Watch:
                     </div>
-                    <div class="col-6">
-                        <input type="text" class="form-control" placeholder="URL" name="url"/>
+                    <div class="col-sm-2">
+                        <div class="custom-control custom-switch">
+                            <input type="checkbox" class="custom-control-input" id="stdSwitch"
+                                   onclick="toggleSecure(this)">
+                            <label class="custom-control-label" for="stdSwitch">Secured URL</label>
+                        </div>
                     </div>
-                    <div class="col-4">
-                        <button name="add" value="approve">Add</button>
+                    <div class="col-sm-6">
+                        <input type="text" class="form-control" placeholder="Page URL" th:field="*{url}"/>
+                    </div>
+                    <div class="col-sm-2">
+                        <input type="submit" class="btn btn-primary">
                     </div>
                 </div>
             </form>
+
+            <form id="secureUrlForm" action="#" th:action="@{/add-watch-secure}" th:object="${secReq}"
+                  method="POST" hidden="hidden">
+                <div class="form-row form-group">
+                    <div class="col-sm-2">
+                        Add New Watch:
+                    </div>
+                    <div class="col-sm-2">
+                        <div class="custom-control custom-switch">
+                            <input type="checkbox" class="custom-control-input" id="secureSwitch"
+                                   onclick="toggleSecure(this)">
+                            <label class="custom-control-label" for="secureSwitch">Secured URL</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" placeholder="Page URL" th:field="*{url}"/>
+                    </div>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" placeholder="Login URL" th:field="*{loginUrl}"/>
+                    </div>
+                </div>
+                <div class="form-row form-group">
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" autocomplete="off"
+                               placeholder="Post Data JSON (e.g. &quot;a&quot; : &quot;b&quot;, &quot;c&quot; : &quot;d&quot;)"
+                               th:field="*{postData}"/>
+                    </div>
+                    <div class="col-sm-2">
+                        <input type="submit" class="btn btn-primary">
+                    </div>
+                </div>
+            </form>
+
 
         </main>
     </div>
