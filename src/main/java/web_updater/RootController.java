@@ -18,7 +18,7 @@ import web_updater.model.WebPage;
 // TODO Unit Tests
 // TODO Acc. Tests
 // TODO Highlight difference
-// TODO fix false positives on difference check
+// TODO all granularity of differences
 
 @Controller
 public class RootController {
@@ -32,14 +32,14 @@ public class RootController {
 	public RootController(DBController dbController) {
 		this.dbController = dbController;
 		try {
-			dbController.addPageByURL("https://www.bbc.co.uk");
+			dbController.addPageByURL("https://www.google.co.uk");
 		} catch (MalformedURLException | URISyntaxException ignore) {
 		}
 	}
 
 	@GetMapping( {"", "/"})
 	public String getRoot(Model model) {
-		checkForUpdates();
+//		checkForUpdates();
 		model.addAttribute("pages", dbController.getAllPages());
 		return "index";
 	}
@@ -67,7 +67,7 @@ public class RootController {
 	/**
 	 * Checks for updates on the pages in the list of URLs
 	 */
-	@Scheduled(fixedRate = HOUR_MS)
+	@Scheduled(fixedRate = MINUTE_MS)
 	@Async
 	public void checkForUpdates() {
 
@@ -79,7 +79,7 @@ public class RootController {
 				if (p.getOldHtml() == null) {
 					ackChanges(p.getURL());
 				} else {
-					p.setChanged(!p.getOldHtml().hasSameValue(p.getNewHtml()));
+					p.setChanged(!Utils.areDocumentsEqual(p.getOldHtml(), p.getNewHtml()));
 				}
 			} catch (IOException e) {
 				e.printStackTrace();

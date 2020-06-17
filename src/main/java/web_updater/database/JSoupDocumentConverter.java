@@ -13,7 +13,7 @@ public class JSoupDocumentConverter implements AttributeConverter<Document, Stri
 		if (document == null) {
 			return null;
 		}
-		return document.toString();
+		return document.outerHtml();
 	}
 
 	@Override

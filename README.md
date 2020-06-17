@@ -29,6 +29,7 @@ To run the application run ```mvn spring-boot:run``` project root directory
 The following env variables are needed:
 * DB_USER = the username for the database
 * DB_PASS = the password for the database
+* DB_SECRET = the secret for database encryption
 
 ## Heroku
 This app is currently available on Heroku at https://website-updater.herokuapp.com/

@@ -47,16 +47,7 @@ public class DBController {
 
 	@GetMapping("/all")
 	public String getAllPagesPage(Model model) {
-		List<WebPage> pages = getAllPages();
-		pages.forEach(p -> {
-			if (p.getOldHtml() != null) {
-				p.getOldHtml().outputSettings().prettyPrint(true);
-			}
-			if (p.getNewHtml() != null) {
-				p.getNewHtml().outputSettings().prettyPrint(true);
-			}
-		});
-		model.addAttribute("pages", pages);
+		model.addAttribute("pages", getAllPages());
 		return "db_all";
 	}
 
