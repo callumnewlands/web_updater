@@ -1,4 +1,4 @@
-package web_updater;
+package web_updater.database;
 
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;

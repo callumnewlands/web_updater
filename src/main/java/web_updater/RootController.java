@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.util.List;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
@@ -14,6 +12,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.view.RedirectView;
+import web_updater.database.DBController;
+import web_updater.model.WebPage;
+
+// TODO Unit Tests
+// TODO Acc. Tests
+// TODO Highlight difference
+// TODO fix false positives on difference check
 
 @Controller
 public class RootController {
@@ -27,7 +32,7 @@ public class RootController {
 	public RootController(DBController dbController) {
 		this.dbController = dbController;
 		try {
-			dbController.addURL("https://www.google.co.uk");
+			dbController.addPageByURL("https://www.bbc.co.uk");
 		} catch (MalformedURLException | URISyntaxException ignore) {
 		}
 	}
@@ -49,14 +54,13 @@ public class RootController {
 	public RedirectView ackChanges(@RequestParam String url) {
 		dbController.setPageChanged(url, false);
 		WebPage page = dbController.getPage(url);
-		Document newHtml = page.getNewHtml();
-		dbController.setPageOldHTML(url, newHtml);
+		dbController.setPageOldHTML(url, page.getNewHtml());
 		return new RedirectView("");
 	}
 
 	@PostMapping("add-watch")
 	private RedirectView addURLToWatchList(@RequestParam String url) throws MalformedURLException, URISyntaxException {
-		dbController.addURL(url);
+		dbController.addPageByURL(url);
 		return new RedirectView("");
 	}
 
@@ -71,11 +75,11 @@ public class RootController {
 
 		pages.forEach(p -> {
 			try {
-				p.setNewHtml(Jsoup.connect(p.getURL()).get());
+				p.updateNewHtml();
 				if (p.getOldHtml() == null) {
 					ackChanges(p.getURL());
 				} else {
-					p.setChanged(p.getOldHtml().hasSameValue(p.getNewHtml()));
+					p.setChanged(!p.getOldHtml().hasSameValue(p.getNewHtml()));
 				}
 			} catch (IOException e) {
 				e.printStackTrace();

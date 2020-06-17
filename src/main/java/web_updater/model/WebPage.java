@@ -1,4 +1,4 @@
-package web_updater;
+package web_updater.model;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -7,10 +7,15 @@ import javax.persistence.Convert;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.Lob;
+import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import web_updater.database.JSoupDocumentConverter;
 
 @Entity
+@Inheritance(strategy = InheritanceType.JOINED)
 public class WebPage {
 	@Id
 	private String URL;
@@ -80,6 +85,10 @@ public class WebPage {
 				", oldHtml=" + (oldHtml == null ? "null" : oldHtml.nodeName()) + "..." +
 				", newHtml=" + (newHtml == null ? "null" : newHtml.nodeName()) + "..." +
 				'}';
+	}
+
+	public void updateNewHtml() throws IOException {
+		this.setNewHtml(Jsoup.connect(this.URL).get());
 	}
 }
 

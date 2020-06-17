@@ -1,9 +1,10 @@
-package web_updater;
+package web_updater.database;
 
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
+import java.util.Map;
 import javax.transaction.Transactional;
 import org.jsoup.nodes.Document;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,22 +12,36 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import web_updater.model.SecureWebPage;
+import web_updater.model.WebPage;
 
 @Controller
 @RequestMapping(path = "/db")
 public class DBController {
 
 	@Autowired
-	WebPageRepository webPageRepository;
+	WebPageRepository<WebPage> webPageRepository;
 
-	public void addURL(@RequestParam String url) throws MalformedURLException, URISyntaxException {
+	@Autowired
+	WebPageRepository<SecureWebPage> secureWebPageRepository;
+
+	public void addPageByURL(String url) throws MalformedURLException, URISyntaxException {
 		// Check validity of URL - will throw exception if invalid
 		new URL(url).toURI();
 
 		// TODO don't allow "localhost" or equivalent to be added
 		if (getAllPages().stream().map(WebPage::getURL).noneMatch(s -> s.equals(url))) {
 			webPageRepository.save(new WebPage(url));
+		}
+	}
+
+	public void addSecurePage(String url, String loginURL, Map<String, String> postData) throws MalformedURLException, URISyntaxException {
+		// Check validity of URL - will throw exception if invalid
+		new URL(url).toURI();
+
+		// TODO don't allow "localhost" or equivalent to be added
+		if (getAllPages().stream().map(WebPage::getURL).noneMatch(s -> s.equals(url))) {
+			secureWebPageRepository.save(new SecureWebPage(url, loginURL, postData));
 		}
 	}
 
@@ -45,6 +60,10 @@ public class DBController {
 		return "db_all";
 	}
 
+	public WebPage getPage(String url) {
+		return webPageRepository.getOne(url);
+	}
+
 	public List<WebPage> getAllPages() {
 		return webPageRepository.findAll();
 	}
@@ -54,10 +73,6 @@ public class DBController {
 		WebPage p = getPage(url);
 		p.setChanged(b);
 		webPageRepository.save(p);
-	}
-
-	public WebPage getPage(String url) {
-		return webPageRepository.getOne(url);
 	}
 
 	@Transactional
