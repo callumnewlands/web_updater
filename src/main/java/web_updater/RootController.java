@@ -3,8 +3,16 @@ package web_updater;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+
+import static web_updater.model.Difference.DifferenceType.ADDED;
+import static web_updater.model.Difference.DifferenceType.REMOVED;
+import static web_updater.model.Difference.DifferenceType.UNCHANGED;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.scheduling.annotation.Async;
@@ -19,11 +27,11 @@ import org.springframework.web.servlet.view.RedirectView;
 import web_updater.database.DBController;
 import web_updater.model.AddSecureURLRequest;
 import web_updater.model.AddURLRequest;
+import web_updater.model.Difference;
 import web_updater.model.WebPage;
 
 // TODO Unit Tests
 // TODO Acc. Tests
-// TODO Highlight difference
 // TODO all granularity of differences
 // TODO last updated timestamp
 // TODO ignore comments - toggleable?
@@ -43,16 +51,69 @@ public class RootController {
 
 	@GetMapping( {"", "/"})
 	public String getRoot(Model model) {
-//		checkForUpdates();
+		checkForUpdates();
 		model.addAttribute("pages", dbController.getAllPages());
 		model.addAttribute("req", new AddURLRequest());
 		model.addAttribute("secReq", new AddSecureURLRequest());
 		return "index";
 	}
 
+	@GetMapping("visual")
+	public String getVisualisation(@RequestParam String url, Model model) {
+		model.addAttribute("page", dbController.getPage(url));
+		return "visualisation";
+	}
+
 	@GetMapping("diff")
 	public String getDiff(@RequestParam String url, Model model) {
-		model.addAttribute("page", dbController.getPage(url));
+		WebPage page = dbController.getPage(url);
+		LinkedList<String> oldLines = page.getOldHtml().toString().lines().collect(Collectors.toCollection(LinkedList::new));
+		LinkedList<String> newLines = page.getNewHtml().toString().lines().collect(Collectors.toCollection(LinkedList::new));
+
+		List<Difference> differences = new ArrayList<>();
+
+		while (!oldLines.isEmpty() || !newLines.isEmpty()) {
+			String topOld = oldLines.pop();
+			String topNew = newLines.pop();
+			if (topOld.equals(topNew)) {
+				differences.add(new Difference(topOld, UNCHANGED));
+				continue;
+			}
+			boolean inserted = false;
+			for (int i = 0; i < Math.max(oldLines.size(), newLines.size()); i++) {
+				if (i < newLines.size()) {
+					if (topOld.equals(newLines.get(i))) {
+						for (int j = 0; j <= i; j++) {
+							differences.add(new Difference(topNew, ADDED));
+							topNew = newLines.pop();
+						}
+						differences.add(new Difference(topNew, UNCHANGED));
+						inserted = true;
+						break;
+					}
+				}
+				if (i < oldLines.size()) {
+					if (topNew.equals(oldLines.get(i))) {
+						for (int j = 0; j <= i; j++) {
+							differences.add(new Difference(topOld, REMOVED));
+							topOld = oldLines.pop();
+						}
+						differences.add(new Difference(topOld, UNCHANGED));
+						inserted = true;
+						break;
+					}
+				}
+			}
+			// TODO optimise this so that O(2n) is not needed for modified (removed and added) lines
+			if (!inserted) {
+				differences.add(new Difference(topOld, REMOVED));
+				differences.add(new Difference(topNew, ADDED));
+			}
+		}
+
+		page.setDiffList(differences);
+
+		model.addAttribute("page", page);
 		return "diff";
 	}
 
@@ -78,17 +139,10 @@ public class RootController {
 		return new RedirectView("");
 	}
 
-
-	@GetMapping("update")
-	public RedirectView update() {
-		checkForUpdates();
-		return new RedirectView("");
-	}
-
 	/**
 	 * Checks for updates on the pages in the list of URLs
 	 */
-	@Scheduled(fixedRate = MINUTE_MS)
+	@Scheduled(fixedRate = HOUR_MS)
 	@Async
 	public void checkForUpdates() {
 

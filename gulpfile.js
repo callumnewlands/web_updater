@@ -6,9 +6,9 @@ const browserSync = require('browser-sync').create();
 
 gulp.task('watch', () => {
     browserSync.init({proxy: 'localhost:8080',});
-    gulp.watch(['src/main/resources/**/*.html'], gulp.series('copy-html-and-reload'));
-    gulp.watch(['src/main/resources/**/*.css'], gulp.series('copy-css-and-reload'));
-    gulp.watch(['src/main/resources/**/*.js'], gulp.series('copy-js-and-reload'));
+    gulp.watch(['src/main/resources/**/*.html'], gulp.series('copy-html'));
+    gulp.watch(['src/main/resources/**/*.css'], gulp.series('copy-css'));
+    gulp.watch(['src/main/resources/**/*.js'], gulp.series('copy-js'));
 });
 
 gulp.task('copy-html', () => gulp.src(['src/main/resources/**/*.html']).pipe(gulp.dest('target/classes/')));

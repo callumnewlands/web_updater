@@ -10,6 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Lob;
+import javax.persistence.Transient;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import web_updater.database.JSoupDocumentConverter;
@@ -28,6 +29,9 @@ public class WebPage {
 	@Lob
 	@Convert(converter = JSoupDocumentConverter.class)
 	private Document newHtml;
+
+	@Transient
+	List<Difference> differences;
 
 	public WebPage() {
 	}
@@ -60,9 +64,18 @@ public class WebPage {
 		return oldHtml;
 	}
 
+	public List<Difference> getDiffList() {
+		return differences;
+	}
+
+	public void setDiffList(List<Difference> diffList) {
+		this.differences = diffList;
+	}
+
 	public Document getNewHtml() {
 		return newHtml;
 	}
+
 
 	public void setOldHtml(Document oldHtml) {
 		this.oldHtml = oldHtml;

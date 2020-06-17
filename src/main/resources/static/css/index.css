@@ -35,3 +35,7 @@
 iframe.diff {
     height: 70vh;
 }
+
+pre.diff {
+    margin-bottom: 0;
+}

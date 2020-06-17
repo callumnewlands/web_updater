@@ -19,6 +19,7 @@
                         <th>URL</th>
                         <th>Changed?</th>
                         <th>Any Errors?</th>
+                        <th>Visualise</th>
                         <th>See Diff's</th>
                         <th>ACK Changes</th>
                     </tr>
@@ -31,6 +32,10 @@
                         <td th:class="${page.getChanged() ? 'table-warning' : ''}" th:text="${page.getChanged()}"></td>
                         <td th:class="${!page.getErrors().isEmpty() ? 'table-danger' : ''}"
                             th:text="${page.getErrors().isEmpty() ? '-' : page.getErrors().size()}"></td>
+                        <td>
+                            <a type="button" class="btn btn-primary"
+                               th:href="@{/visual(url=${page.getURL()})}">Visual</a>
+                        </td>
                         <td>
                             <a type="button" class="btn btn-primary" th:href="@{/diff(url=${page.getURL()})}">Diff.</a>
                         </td>
