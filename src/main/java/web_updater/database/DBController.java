@@ -76,4 +76,10 @@ public class DBController {
 	public void savePage(WebPage p) {
 		webPageRepository.save(p);
 	}
+
+	public void ackChanges(String url) {
+		setPageChanged(url, false);
+		WebPage page = getPage(url);
+		setPageOldHTML(url, page.getNewHtml());
+	}
 }

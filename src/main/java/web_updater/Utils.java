@@ -32,7 +32,9 @@ public final class Utils {
 			return true;
 		}
 
-		List<Difference> differences = getDiffList(d1, d2);
+		List<String> d1Lines = d1.toString().lines().collect(Collectors.toList());
+		List<String> d2Lines = d2.toString().lines().collect(Collectors.toList());
+		List<Difference> differences = getDiffList(d1Lines, d2Lines);
 		if (differences.stream().anyMatch(d -> d.getType() != UNCHANGED)) {
 			return false;
 		}
@@ -41,17 +43,17 @@ public final class Utils {
 
 	private static String removeDatesTimesCommentsWhitespace(final String str) {
 
-		final String TIME_PATTERN = "(?:\\d|[01]\\d|2[0-3]):[0-5]\\d(:[0-5]\\d)?";
+		final String TIME_PATTERN = "(?:\\d|[01]\\d|2[0-3]):[0-5]\\d(:[0-5]\\d)?|([Tt]imestamp\\s*[-:]?\\s*\\d\\d*\\.?\\d\\d*)";
 
 		final String DATE_PATTERN_YYYY_MM_DD = "((19|20)\\d\\d[- /.](0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01]))";
-		final String DATE_PATTERN_MM_DD_YYYY = "((0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])[- /.](19|20)\\d\\d)";
-		final String DATE_PATTERN_DD_MM_YYYY = "((0[1-9]|[12][0-9]|3[01])[- /.](0[1-9]|1[012])[- /.](19|20)\\d\\d)";
-		final String DATE_PATTERN_DAY = "((M|m)on|(T|t)ue(s)?|(W|w)ed(nes)?|(T|t)hu(rs)?|(F|f)ri|(S|s)at(ur)?|(S|s)un)(day)?";
+		final String DATE_PATTERN_MM_DD_YY = "((0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])[- /.](19|20)?\\d\\d)";
+		final String DATE_PATTERN_DD_MM_YY = "((0[1-9]|[12][0-9]|3[01])[- /.](0[1-9]|1[012])[- /.](19|20)?\\d\\d)";
+		final String DATE_PATTERN_DAY = "(([Mm])on|([Tt])ue(s)?|([Ww])ed(nes)?|([Tt])hu(rs)?|([Ff])ri|([Ss])at(ur)?|([Ss])un)(day)?";
 		final String DATE_PATTERN_MONTH = "(Jan(uary)?|Feb(ruary)?|Mar(ch)?|Apr(il)?|May|Jun(e)?|Jul(y)?|Aug(ust)?|Sep(tember)?|Oct(ober)?|Nov(ember)?|Dec(ember))";
 		final String LONG_DATE_PATTERN =
-				DATE_PATTERN_DAY + "[- /.]?(0[1-9]|[12][0-9]|3[01])?[- /.]?" + DATE_PATTERN_MONTH + "[- /.]?(0[1-9]|[12][0-9]|3[01])?[- /.]?";
+				"(" + DATE_PATTERN_DAY + "[- /.]?(0[1-9]|[12][0-9]|3[01])?[- /.]?" + DATE_PATTERN_MONTH + "[- /.]?(0[1-9]|[12][0-9]|3[01])?[- /.]?)";
 		final String DATE_PATTERN =
-				DATE_PATTERN_YYYY_MM_DD + "|" + DATE_PATTERN_MM_DD_YYYY + "|" + DATE_PATTERN_DD_MM_YYYY + "|" + LONG_DATE_PATTERN;
+				DATE_PATTERN_YYYY_MM_DD + "|" + DATE_PATTERN_MM_DD_YY + "|" + DATE_PATTERN_DD_MM_YY + "|" + LONG_DATE_PATTERN;
 
 		final String HTML_COMMENT_PATTERN = "<!--(.*?)-->";
 
@@ -63,37 +65,47 @@ public final class Utils {
 		return s;
 	}
 
-	public static List<Difference> getDiffList(Document oldHtml, Document newHtml) {
-		LinkedList<String> oldLines = oldHtml.toString().lines().collect(Collectors.toCollection(LinkedList::new));
-		LinkedList<String> newLines = newHtml.toString().lines().collect(Collectors.toCollection(LinkedList::new));
+	public static boolean areLinesEqual(final String l1, final String l2) {
+		if (l1.equals(l2)) {
+			return true;
+		}
 
+		String l1Edit = removeDatesTimesCommentsWhitespace(l1);
+		String l2Edit = removeDatesTimesCommentsWhitespace(l2);
+
+		return l1Edit.equals(l2Edit);
+	}
+
+	public static List<Difference> getDiffList(List<String> oldLines, List<String> newLines) {
+		LinkedList<String> oldLinesStack = new LinkedList<>(oldLines);
+		LinkedList<String> newLinesStack = new LinkedList<>(newLines);
 		List<Difference> differences = new ArrayList<>();
 
-		while (!oldLines.isEmpty() || !newLines.isEmpty()) {
-			String topOld = oldLines.pop();
-			String topNew = newLines.pop();
+		while (!oldLinesStack.isEmpty() || !newLinesStack.isEmpty()) {
+			String topOld = oldLinesStack.pop();
+			String topNew = newLinesStack.pop();
 			if (Utils.areLinesEqual(topOld, topNew)) {
 				differences.add(new Difference(topOld, UNCHANGED));
 				continue;
 			}
 			boolean inserted = false;
-			for (int i = 0; i < Math.max(oldLines.size(), newLines.size()); i++) {
-				if (i < newLines.size()) {
-					if (Utils.areLinesEqual(topOld, newLines.get(i))) {
+			for (int i = 0; i < Math.max(oldLinesStack.size(), newLinesStack.size()); i++) {
+				if (i < newLinesStack.size()) {
+					if (Utils.areLinesEqual(topOld, newLinesStack.get(i))) {
 						for (int j = 0; j <= i; j++) {
 							differences.add(new Difference(topNew, ADDED));
-							topNew = newLines.pop();
+							topNew = newLinesStack.pop();
 						}
 						differences.add(new Difference(topNew, UNCHANGED));
 						inserted = true;
 						break;
 					}
 				}
-				if (i < oldLines.size()) {
-					if (Utils.areLinesEqual(topNew, oldLines.get(i))) {
+				if (i < oldLinesStack.size()) {
+					if (Utils.areLinesEqual(topNew, oldLinesStack.get(i))) {
 						for (int j = 0; j <= i; j++) {
 							differences.add(new Difference(topOld, REMOVED));
-							topOld = oldLines.pop();
+							topOld = oldLinesStack.pop();
 						}
 						differences.add(new Difference(topOld, UNCHANGED));
 						inserted = true;
@@ -111,14 +123,4 @@ public final class Utils {
 		return differences;
 	}
 
-	public static boolean areLinesEqual(final String l1, final String l2) {
-		if (l1.equals(l2)) {
-			return true;
-		}
-
-		String l1Edit = removeDatesTimesCommentsWhitespace(l1);
-		String l2Edit = removeDatesTimesCommentsWhitespace(l2);
-
-		return l1Edit.equals(l2Edit);
-	}
 }
