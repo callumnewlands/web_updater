@@ -16,28 +16,13 @@
                 <div class="col-6"><h4>Old Page</h4></div>
                 <div class="col-6"><h4>New Page</h4></div>
             </div>
-            <!--            <div class="row">-->
-            <!--                <div class="col-6">-->
-            <!--                    <pre class="diff w-100 d-block" th:text="${page.getOldHtml().toString()}"></pre>-->
-            <!--                </div>-->
-
-            <!--                <div class="col-6">-->
-            <!--                    <pre class="diff w-100 d-block" th:text="${page.getNewHtml().toString()}"></pre>-->
-            <!--                </div>-->
-            <!--            </div>-->
-
-            <!--            (diff.getType().name() == 'REMOVED' ? 'bg-danger text-white' : '')-->
 
             <div class="row">
                 <div class="col-12">
                     <pre th:each="diff:${page.getDiffList()}" class="diff w-100 d-block"
-                         th:classappend="${diff.getType().name() == 'ADDED'} ? 'bg-success text-white' : (${diff.getType().name() == 'REMOVED'} ? 'bg-danger text-white' : '')"
+                         th:classappend="${diff.getType().name() == 'ADDED'} ? 'table-success' : (${diff.getType().name() == 'REMOVED'} ? 'table-danger' : '')"
                          th:text="${diff.getLine()}"></pre>
                 </div>
-
-                <!--                <div class="col-6">-->
-                <!--                    <pre class="diff w-100 d-block" th:each="line:${page.getNewHtmlDiffList()}" th:text="${line}"></pre>-->
-                <!--                </div>-->
             </div>
         </main>
     </div>
