@@ -82,41 +82,86 @@ public final class Utils {
 		List<Difference> differences = new ArrayList<>();
 
 		while (!oldLinesStack.isEmpty() || !newLinesStack.isEmpty()) {
-			String topOld = oldLinesStack.pop();
-			String topNew = newLinesStack.pop();
+			String topOld = oldLinesStack.peek();
+			String topNew = newLinesStack.peek();
+
+			if (oldLinesStack.isEmpty()) {
+				for (String s : newLinesStack) {
+					differences.add(new Difference(s, ADDED));
+				}
+				break;
+			} else if (newLinesStack.isEmpty()) {
+				for (String s : oldLinesStack) {
+					differences.add(new Difference(s, REMOVED));
+				}
+				break;
+			}
+
 			if (Utils.areLinesEqual(topOld, topNew)) {
 				differences.add(new Difference(topOld, UNCHANGED));
+				oldLinesStack.pop();
+				newLinesStack.pop();
 				continue;
 			}
 			boolean inserted = false;
 			for (int i = 0; i < Math.max(oldLinesStack.size(), newLinesStack.size()); i++) {
 				if (i < newLinesStack.size()) {
-					if (Utils.areLinesEqual(topOld, newLinesStack.get(i))) {
-						for (int j = 0; j <= i; j++) {
-							differences.add(new Difference(topNew, ADDED));
+					for (int j = 0; j <= Math.min(i, oldLinesStack.size() - 1); j++) {
+						if (Utils.areLinesEqual(oldLinesStack.get(j), newLinesStack.get(i))) {
+							topOld = oldLinesStack.pop();
 							topNew = newLinesStack.pop();
+							// removed: everything up to old[j]
+							for (int k = 0; k < j; k++) {
+								differences.add(new Difference(topOld, REMOVED));
+								topOld = oldLinesStack.pop();
+							}
+							// added: everything up to new[i]
+							for (int k = 0; k < i; k++) {
+								differences.add(new Difference(topNew, ADDED));
+								topNew = newLinesStack.pop();
+							}
+							// unchanged: old[j] == new[i]
+							differences.add(new Difference(topNew, UNCHANGED));
+							inserted = true;
+							break;
 						}
-						differences.add(new Difference(topNew, UNCHANGED));
-						inserted = true;
+					}
+					if (inserted) {
 						break;
 					}
 				}
 				if (i < oldLinesStack.size()) {
-					if (Utils.areLinesEqual(topNew, oldLinesStack.get(i))) {
-						for (int j = 0; j <= i; j++) {
-							differences.add(new Difference(topOld, REMOVED));
+					for (int j = 0; j <= Math.min(i, newLinesStack.size() - 1); j++) {
+						if (Utils.areLinesEqual(oldLinesStack.get(i), newLinesStack.get(j))) {
 							topOld = oldLinesStack.pop();
+							topNew = newLinesStack.pop();
+							// removed: everything up to old[i]
+							for (int k = 0; k < i; k++) {
+								differences.add(new Difference(topOld, REMOVED));
+								topOld = oldLinesStack.pop();
+							}
+							// added: everything up to new[j]
+							for (int k = 0; k < j; k++) {
+								differences.add(new Difference(topNew, ADDED));
+								topNew = newLinesStack.pop();
+							}
+							// unchanged: old[j] == new[i]
+							differences.add(new Difference(topNew, UNCHANGED));
+							inserted = true;
+							break;
 						}
-						differences.add(new Difference(topOld, UNCHANGED));
-						inserted = true;
+					}
+					if (inserted) {
 						break;
 					}
 				}
 			}
-			// TODO optimise this so that O(2n) is not needed for modified (removed and added) lines
+			// reached if the last element of the list has been modified (removed and added)
 			if (!inserted) {
 				differences.add(new Difference(topOld, REMOVED));
 				differences.add(new Difference(topNew, ADDED));
+				oldLinesStack.pop();
+				newLinesStack.pop();
 			}
 		}
 

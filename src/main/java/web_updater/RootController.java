@@ -2,10 +2,12 @@ package web_updater;
 
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -26,6 +28,13 @@ import web_updater.model.WebPage;
 // TODO Acc. Tests
 // TODO last updated timestamp
 // TODO make ignoring timestamps etc toggleable
+// TODO better error storage
+// TODO error UI
+// TODO DB schema changes
+// TODO remove watch
+// TODO OAUTH
+// TODO better database display (/db)
+// TODO Heroku Database
 
 @Controller
 public class RootController {
@@ -79,7 +88,8 @@ public class RootController {
 
 	@PostMapping("add-watch-secure")
 	public RedirectView addURLToWatchList(@ModelAttribute AddSecureURLRequest req) throws MalformedURLException, URISyntaxException, JsonProcessingException {
-		Map<String, String> postData = new ObjectMapper().readValue("{" + req.getPostData() + "}", Map.class);
+		Map<String, String> postData = new ObjectMapper().readValue("{" + req.getPostData() + "}", new TypeReference<HashMap<String, String>>() {
+		});
 
 		dbController.addSecurePage(req.getUrl(), req.getLoginUrl(), postData);
 		return ackChanges(req.getUrl());
