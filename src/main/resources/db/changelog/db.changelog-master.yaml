@@ -35,6 +35,8 @@ databaseChangeLog:
                   constraints:
                     nullable:  false
                     foreignKeyName:  fk_web_page_url
+                    onDelete: cascade
+                    onUpdate: cascade
                     references:  web_page(url)
               - column:
                   name:  errors

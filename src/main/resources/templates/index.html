@@ -22,6 +22,7 @@
                         <th>Visualise</th>
                         <th>See Diff's</th>
                         <th>ACK Changes</th>
+                        <th>Delete</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -41,8 +42,16 @@
                             <a type="button" class="btn btn-primary" th:href="@{/diff(url=${page.getURL()})}">Diff.</a>
                         </td>
                         <td>
-                            <form action="#" th:action="@{/ack-changes(url=${page.getURL()})}" method="POST">
-                                <button type="submit" class="btn btn-primary" name="approve" value="approve">Ack.
+                            <form th:action="@{/ack-changes(url=${page.getURL()})}" method="POST">
+                                <button type="submit" class="btn btn-primary" name="approve" value="approve"
+                                        th:disabled="${user == null}">Ack.
+                                </button>
+                            </form>
+                        </td>
+                        <td>
+                            <form th:action="@{/remove-watch(url=${page.getURL()})}" method="POST">
+                                <button type="submit" class="btn btn-danger" name="approve" value="approve"
+                                        th:disabled="${user == null}">Del.
                                 </button>
                             </form>
                         </td>
@@ -51,7 +60,8 @@
                 </table>
             </div>
             <div th:if="${user == null}" class="text-warning pb-3">
-                Some secure pages may be hidden. Please sign in to see all of the watches.
+                Some secure pages may be hidden and some functionality is disabled. Please sign in to see all of the
+                watches.
             </div>
 
             <script>

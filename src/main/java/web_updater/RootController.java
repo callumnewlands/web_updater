@@ -26,9 +26,6 @@ import web_updater.model.Difference;
 import web_updater.model.WebPage;
 import web_updater.security.UserDetails;
 
-//import org.springframework.security.core.userdetails.User;
-
-// TODO remove watch ability
 // TODO better error storage
 // TODO error UI
 // TODO DB schema changes
@@ -92,18 +89,25 @@ public class RootController {
 	}
 
 	@PostMapping("add-watch")
-	public RedirectView addURLToWatchList(@ModelAttribute AddURLRequest req) throws MalformedURLException, URISyntaxException {
+	public RedirectView addURLToWatchList(AddURLRequest req) throws MalformedURLException, URISyntaxException {
 		dbController.addPageByURL(req.getUrl());
 		return ackChanges(req.getUrl());
 	}
 
 	@PostMapping("add-watch-secure")
-	public RedirectView addURLToWatchList(@ModelAttribute AddSecureURLRequest req) throws MalformedURLException, URISyntaxException, JsonProcessingException {
+	public RedirectView addURLToWatchList(AddSecureURLRequest req) throws MalformedURLException, URISyntaxException, JsonProcessingException {
 		Map<String, String> postData = new ObjectMapper().readValue("{" + req.getPostData() + "}", new TypeReference<HashMap<String, String>>() {
 		});
 
 		dbController.addSecurePage(req.getUrl(), req.getLoginUrl(), postData);
 		return ackChanges(req.getUrl());
 	}
+
+	@PostMapping("remove-watch")
+	public RedirectView removeURLFromWatchList(@RequestParam String url) {
+		dbController.removePageByURL(url);
+		return new RedirectView("");
+	}
+
 
 }

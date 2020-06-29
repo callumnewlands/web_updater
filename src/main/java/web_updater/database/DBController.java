@@ -51,6 +51,10 @@ public class DBController {
 		}
 	}
 
+	public void removePageByURL(String url) {
+		webPageRepository.deleteById(url);
+	}
+
 	// TODO test
 	public void addSecurePage(String url, String loginURL, Map<String, String> postData) throws MalformedURLException, URISyntaxException {
 		// Check validity of URL - will throw exception if invalid
@@ -96,4 +100,5 @@ public class DBController {
 		WebPage page = getPage(url);
 		setPageOldHTML(url, page.getNewHtml());
 	}
+
 }
