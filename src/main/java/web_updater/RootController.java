@@ -11,7 +11,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,14 +24,17 @@ import web_updater.model.AddSecureURLRequest;
 import web_updater.model.AddURLRequest;
 import web_updater.model.Difference;
 import web_updater.model.WebPage;
+import web_updater.security.UserDetails;
 
-// TODO Acc. Tests
-// TODO last updated timestamp
+//import org.springframework.security.core.userdetails.User;
+
+// TODO remove watch ability
 // TODO better error storage
 // TODO error UI
 // TODO DB schema changes
-// TODO remove watch ability
 // TODO better database display (/db)
+// TODO last updated timestamp
+// TODO Acc. Tests
 
 // TODO Unit Tests https://spring.io/guides/gs/testing-web/
 @Controller
@@ -47,12 +49,12 @@ public class RootController {
 	}
 
 	@ModelAttribute
-	public void addUser(Model model, @AuthenticationPrincipal User user) {
+	public void addUser(Model model, @AuthenticationPrincipal UserDetails user) {
 		model.addAttribute("user", user);
 	}
 
 	@GetMapping( {"", "/"})
-	public String getRoot(Model model, @AuthenticationPrincipal User user) {
+	public String getRoot(Model model) {
 		updateController.checkForUpdates();
 		model.addAttribute("pages", dbController.getAllPages());
 		model.addAttribute("req", new AddURLRequest());

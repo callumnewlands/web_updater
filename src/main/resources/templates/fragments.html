@@ -31,7 +31,7 @@
     <ul class="navbar-nav px-3">
         <li class="nav-item text-nowrap">
             <form th:if="${user != null}" class="form-inline my-2 my-lg-0" th:action="@{/logout}" method="post">
-                <div class="text-white px-4" th:text="'Logged in as: ' + ${user.getUsername()}"></div>
+                <div class="text-white px-4" th:text="'Logged in as: ' + ${user.getName()}"></div>
                 <input type="submit" class="btn btn-primary" value="Sign Out"/>
             </form>
             <a th:if="${user == null}" type="submit" class="btn btn-primary" th:href="@{/login}">Sign In</a>
@@ -50,9 +50,14 @@
                             Dashboard
                         </a>
                     </li>
-
-                    <li class="nav-item" th:each="i : ${#numbers.sequence(2, 5)}">
-                        <a class="nav-link" href="#" th:text="'Page ' + ${i}">
+                    <li class="nav-item">
+                        <a class="nav-link active" th:href="@{/admin/db}">
+                            <span data-feather="database"></span>
+                            Database Contents
+                        </a>
+                    </li>
+                    <li class="nav-item" th:each="i : ${#numbers.sequence(3, 5)}">
+                        <a class="nav-link active" href="#" th:text="'Page ' + ${i}">
                             <span th:data-feather="'page_' + ${i}"></span>
                         </a>
                     </li>

@@ -9,7 +9,6 @@ import javax.transaction.Transactional;
 import org.jsoup.nodes.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,9 +16,10 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import web_updater.model.SecureWebPage;
 import web_updater.model.WebPage;
+import web_updater.security.UserDetails;
 
 @Controller
-@RequestMapping(path = "/db")
+@RequestMapping(path = "/admin/db")
 public class DBController {
 
 	@Autowired
@@ -29,8 +29,15 @@ public class DBController {
 	WebPageRepository<SecureWebPage> secureWebPageRepository;
 
 	@ModelAttribute
-	public void addUser(Model model, @AuthenticationPrincipal User user) {
+	public void addUser(Model model, @AuthenticationPrincipal UserDetails user) {
 		model.addAttribute("user", user);
+	}
+
+	// TODO Unit Tests https://spring.io/guides/gs/testing-web/
+	@GetMapping( {"", "/"})
+	public String getAllPagesPage(Model model) {
+		model.addAttribute("pages", getAllPages());
+		return "db_all";
 	}
 
 	// TODO test
@@ -53,13 +60,6 @@ public class DBController {
 		if (getAllPages().stream().map(WebPage::getURL).noneMatch(s -> s.equals(url))) {
 			secureWebPageRepository.save(new SecureWebPage(url, loginURL, postData));
 		}
-	}
-
-	// TODO Unit Tests https://spring.io/guides/gs/testing-web/
-	@GetMapping("/all")
-	public String getAllPagesPage(Model model) {
-		model.addAttribute("pages", getAllPages());
-		return "db_all";
 	}
 
 	public WebPage getPage(String url) {

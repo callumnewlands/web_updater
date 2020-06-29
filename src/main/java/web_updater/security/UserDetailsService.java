@@ -12,15 +12,11 @@ public class UserDetailsService implements org.springframework.security.core.use
 	private UserRepository userRepository;
 
 	@Override
-	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		User u = userRepository.getOne(username);
+	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+		User u = userRepository.getOne(email);
 		if (u == null) {
-			throw new UsernameNotFoundException(username);
+			throw new UsernameNotFoundException(email);
 		}
-		return org.springframework.security.core.userdetails.User
-				.withUsername(u.getUsername())
-				.password("{noop}" + u.getPassword()) // noop = no password encoder as it is unencrypted by JPA
-				.roles(u.getRoles().toArray(String[]::new))
-				.build();
+		return new web_updater.security.UserDetails(u);
 	}
 }
