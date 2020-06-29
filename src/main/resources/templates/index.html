@@ -25,7 +25,8 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr th:each="page: ${pages}">
+                    <tr th:each="page: ${pages}"
+                        th:if="${page instanceof T(web_updater.model.SecureWebPage) && user != null || !(page instanceof T(web_updater.model.SecureWebPage))}">
                         <td>
                             <a th:href="${page.getURL()}" th:text="${page.getURL()}"></a>
                         </td>
@@ -48,6 +49,9 @@
                     </tr>
                     </tbody>
                 </table>
+            </div>
+            <div th:if="${user == null}" class="text-warning pb-3">
+                Some secure pages may be hidden. Please sign in to see all of the watches.
             </div>
 
             <script>

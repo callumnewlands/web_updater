@@ -10,6 +10,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,18 +26,16 @@ import web_updater.model.AddURLRequest;
 import web_updater.model.Difference;
 import web_updater.model.WebPage;
 
-// TODO Unit Tests
 // TODO Acc. Tests
 // TODO last updated timestamp
-// TODO make ignoring timestamps etc toggleable
 // TODO better error storage
 // TODO error UI
 // TODO DB schema changes
-// TODO remove watch
-// TODO OAUTH
+// TODO remove watch ability
+// TODO login db
 // TODO better database display (/db)
-// TODO Heroku Database
 
+// TODO Unit Tests https://spring.io/guides/gs/testing-web/
 @Controller
 public class RootController {
 
@@ -47,13 +47,23 @@ public class RootController {
 		this.dbController = dbController;
 	}
 
+	@ModelAttribute
+	public void addUser(Model model, @AuthenticationPrincipal User user) {
+		model.addAttribute("user", user);
+	}
+
 	@GetMapping( {"", "/"})
-	public String getRoot(Model model) {
+	public String getRoot(Model model, @AuthenticationPrincipal User user) {
 		updateController.checkForUpdates();
 		model.addAttribute("pages", dbController.getAllPages());
 		model.addAttribute("req", new AddURLRequest());
 		model.addAttribute("secReq", new AddSecureURLRequest());
 		return "index";
+	}
+
+	@GetMapping("login")
+	public String getLogin() {
+		return "login";
 	}
 
 	@GetMapping("visual")

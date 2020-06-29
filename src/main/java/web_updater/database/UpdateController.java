@@ -22,6 +22,7 @@ public class UpdateController {
 	/**
 	 * Checks for updates on the pages in the list of URLs
 	 */
+	// TODO test
 	@Scheduled(fixedRate = HOUR_MS)
 	@Async
 	public void checkForUpdates() {

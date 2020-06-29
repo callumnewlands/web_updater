@@ -89,6 +89,10 @@ public class WebPage {
 		errors.add(e);
 	}
 
+	public void updateNewHtml() throws IOException {
+		this.setNewHtml(Jsoup.connect(this.URL).get());
+	}
+
 	@Override
 	public String toString() {
 		return "WebPage{" +
@@ -100,8 +104,5 @@ public class WebPage {
 				'}';
 	}
 
-	public void updateNewHtml() throws IOException {
-		this.setNewHtml(Jsoup.connect(this.URL).get());
-	}
 }
 

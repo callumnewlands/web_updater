@@ -8,6 +8,7 @@ import org.jsoup.nodes.Document;
 @Converter
 public class JSoupDocumentConverter implements AttributeConverter<Document, String> {
 
+	// TODO test
 	@Override
 	public String convertToDatabaseColumn(Document document) {
 		if (document == null) {
@@ -16,6 +17,7 @@ public class JSoupDocumentConverter implements AttributeConverter<Document, Stri
 		return document.outerHtml();
 	}
 
+	// TODO test
 	@Override
 	public Document convertToEntityAttribute(String s) {
 		if (s == null) {

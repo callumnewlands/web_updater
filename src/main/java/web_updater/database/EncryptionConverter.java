@@ -30,6 +30,7 @@ public class EncryptionConverter implements AttributeConverter<String, String> {
 				"AES"), new IvParameterSpec(new byte[16]));
 	}
 
+	// TODO test
 	@Override
 	public String convertToDatabaseColumn(String s) {
 		try {
@@ -41,6 +42,7 @@ public class EncryptionConverter implements AttributeConverter<String, String> {
 		}
 	}
 
+	// TODO test
 	@Override
 	public String convertToEntityAttribute(String s) {
 		try {

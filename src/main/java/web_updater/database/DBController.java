@@ -8,9 +8,12 @@ import java.util.Map;
 import javax.transaction.Transactional;
 import org.jsoup.nodes.Document;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import web_updater.model.SecureWebPage;
 import web_updater.model.WebPage;
@@ -25,6 +28,12 @@ public class DBController {
 	@Autowired
 	WebPageRepository<SecureWebPage> secureWebPageRepository;
 
+	@ModelAttribute
+	public void addUser(Model model, @AuthenticationPrincipal User user) {
+		model.addAttribute("user", user);
+	}
+
+	// TODO test
 	public void addPageByURL(String url) throws MalformedURLException, URISyntaxException {
 		// Check validity of URL - will throw exception if invalid
 		new URL(url).toURI();
@@ -35,6 +44,7 @@ public class DBController {
 		}
 	}
 
+	// TODO test
 	public void addSecurePage(String url, String loginURL, Map<String, String> postData) throws MalformedURLException, URISyntaxException {
 		// Check validity of URL - will throw exception if invalid
 		new URL(url).toURI();
@@ -45,6 +55,7 @@ public class DBController {
 		}
 	}
 
+	// TODO Unit Tests https://spring.io/guides/gs/testing-web/
 	@GetMapping("/all")
 	public String getAllPagesPage(Model model) {
 		model.addAttribute("pages", getAllPages());
@@ -59,6 +70,7 @@ public class DBController {
 		return webPageRepository.findAll();
 	}
 
+	// TODO test
 	@Transactional
 	public void setPageChanged(String url, boolean b) {
 		WebPage p = getPage(url);
@@ -66,6 +78,7 @@ public class DBController {
 		webPageRepository.save(p);
 	}
 
+	// TODO test
 	@Transactional
 	public void setPageOldHTML(String url, Document value) {
 		WebPage p = getPage(url);
@@ -77,6 +90,7 @@ public class DBController {
 		webPageRepository.save(p);
 	}
 
+	// TODO test
 	public void ackChanges(String url) {
 		setPageChanged(url, false);
 		WebPage page = getPage(url);
