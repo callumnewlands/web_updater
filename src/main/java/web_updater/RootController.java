@@ -32,7 +32,6 @@ import web_updater.model.WebPage;
 // TODO error UI
 // TODO DB schema changes
 // TODO remove watch ability
-// TODO login db
 // TODO better database display (/db)
 
 // TODO Unit Tests https://spring.io/guides/gs/testing-web/

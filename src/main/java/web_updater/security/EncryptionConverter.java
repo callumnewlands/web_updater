@@ -1,4 +1,4 @@
-package web_updater.database;
+package web_updater.security;
 
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
@@ -52,5 +52,9 @@ public class EncryptionConverter implements AttributeConverter<String, String> {
 			e.printStackTrace();
 			return null;
 		}
+	}
+
+	public static void main(String[] args) {
+		System.out.println("Hello World!");
 	}
 }

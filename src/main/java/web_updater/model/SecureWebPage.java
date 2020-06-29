@@ -11,7 +11,7 @@ import javax.persistence.MapKeyColumn;
 import javax.persistence.PrimaryKeyJoinColumn;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
-import web_updater.database.EncryptionConverter;
+import web_updater.security.EncryptionConverter;
 
 @Entity
 @PrimaryKeyJoinColumn(name = "URL")
