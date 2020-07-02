@@ -22,7 +22,7 @@ public class WebPage {
 	private String URL;
 	private Boolean changed = false;
 	@ElementCollection
-	private List<Exception> errors = new ArrayList<>();
+	private List<String> errors = new ArrayList<>();
 	@Lob
 	@Convert(converter = JSoupDocumentConverter.class)
 	private Document oldHtml = null;
@@ -56,7 +56,7 @@ public class WebPage {
 		this.changed = changed;
 	}
 
-	public List<Exception> getErrors() {
+	public List<String> getErrors() {
 		return errors;
 	}
 
@@ -86,7 +86,7 @@ public class WebPage {
 	}
 
 	public void addError(IOException e) {
-		errors.add(e);
+		errors.add(e.getMessage());
 	}
 
 	public void updateNewHtml() throws IOException {

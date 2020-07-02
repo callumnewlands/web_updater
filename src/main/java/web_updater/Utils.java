@@ -41,6 +41,10 @@ public final class Utils {
 		return true;
 	}
 
+	// TODO
+	//	  <p align="right"> auto-generated at Sun Jun 28 16:55:35 BST 2020 </p>
+	//	  <p align="right"> auto-generated at Thu Jul 2 20:25:33 BST 2020 </p>
+
 	private static String removeDatesTimesCommentsWhitespace(final String str) {
 
 		final String TIME_PATTERN = "(?:\\d|[01]\\d|2[0-3]):[0-5]\\d(:[0-5]\\d)?|([Tt]imestamp\\s*[-:]?\\s*\\d\\d*\\.?\\d\\d*)";

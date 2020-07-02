@@ -26,6 +26,8 @@ import web_updater.model.Difference;
 import web_updater.model.WebPage;
 import web_updater.security.UserDetails;
 
+// TODO heroku DB
+// TODO scroll to next diff.
 // TODO better error storage
 // TODO error UI
 // TODO DB schema changes
