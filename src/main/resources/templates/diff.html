@@ -19,7 +19,7 @@
 
             <div class="row">
                 <div class="col-12">
-                    <pre th:each="diff:${page.getDiffList()}" class="diff w-100 d-block"
+                    <pre th:each="diff:${page.getDifferences()}" class="diff w-100 d-block"
                          th:classappend="${diff.getType().name() == 'ADDED'} ? 'table-success' : (${diff.getType().name() == 'REMOVED'} ? 'table-danger' : '')"
                          th:text="${diff.getLine()}"></pre>
                 </div>

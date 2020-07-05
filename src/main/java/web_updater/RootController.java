@@ -79,7 +79,7 @@ public class RootController {
 		List<String> oldLines = page.getOldHtml().toString().lines().collect(Collectors.toList());
 		List<String> newLines = page.getNewHtml().toString().lines().collect(Collectors.toList());
 		List<Difference> differences = Utils.getDiffList(oldLines, newLines);
-		page.setDiffList(differences);
+		page.setDifferences(differences);
 		model.addAttribute("page", page);
 		return "diff";
 	}

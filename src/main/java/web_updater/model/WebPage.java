@@ -11,78 +11,43 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Lob;
 import javax.persistence.Transient;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import web_updater.database.JSoupDocumentConverter;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
+@Getter
+@Setter
+@NoArgsConstructor
 public class WebPage {
-	@Id
-	private String URL;
-	private Boolean changed = false;
-	@ElementCollection
-	private List<String> errors = new ArrayList<>();
-	@Lob
-	@Convert(converter = JSoupDocumentConverter.class)
-	private Document oldHtml = null;
-	@Lob
-	@Convert(converter = JSoupDocumentConverter.class)
-	private Document newHtml;
 
 	@Transient
 	List<Difference> differences;
 
-	public WebPage() {
-	}
+	@Id
+	private String URL;
+
+	private Boolean changed = false;
+
+	@ElementCollection
+	@Setter(AccessLevel.NONE)
+	private List<String> errors = new ArrayList<>();
+
+	@Lob
+	@Convert(converter = JSoupDocumentConverter.class)
+	private Document oldHtml = null;
+
+	@Lob
+	@Convert(converter = JSoupDocumentConverter.class)
+	private Document newHtml;
 
 	public WebPage(String URL) {
 		this.URL = URL;
-	}
-
-	public String getURL() {
-		return URL;
-	}
-
-	public void setURL(String URL) {
-		this.URL = URL;
-	}
-
-	public Boolean getChanged() {
-		return changed;
-	}
-
-	public void setChanged(Boolean changed) {
-		this.changed = changed;
-	}
-
-	public List<String> getErrors() {
-		return errors;
-	}
-
-	public Document getOldHtml() {
-		return oldHtml;
-	}
-
-	public List<Difference> getDiffList() {
-		return differences;
-	}
-
-	public void setDiffList(List<Difference> diffList) {
-		this.differences = diffList;
-	}
-
-	public Document getNewHtml() {
-		return newHtml;
-	}
-
-
-	public void setOldHtml(Document oldHtml) {
-		this.oldHtml = oldHtml;
-	}
-
-	public void setNewHtml(Document newHtml) {
-		this.newHtml = newHtml;
 	}
 
 	public void addError(IOException e) {
@@ -90,7 +55,7 @@ public class WebPage {
 	}
 
 	public void updateNewHtml() throws IOException {
-		this.setNewHtml(Jsoup.connect(this.URL).get());
+		this.newHtml = Jsoup.connect(this.URL).get();
 	}
 
 	@Override

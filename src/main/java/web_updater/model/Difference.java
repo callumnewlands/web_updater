@@ -1,5 +1,10 @@
 package web_updater.model;
 
+import lombok.Getter;
+import lombok.ToString;
+
+@Getter
+@ToString
 public class Difference {
 	public enum DifferenceType {
 		ADDED, REMOVED, UNCHANGED
@@ -13,14 +18,6 @@ public class Difference {
 		this.type = type;
 	}
 
-	public String getLine() {
-		return line;
-	}
-
-	public DifferenceType getType() {
-		return type;
-	}
-
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) {
@@ -31,13 +28,5 @@ public class Difference {
 		}
 		Difference that = (Difference) o;
 		return this.line.equals(that.line) && this.type == that.type;
-	}
-
-	@Override
-	public String toString() {
-		return "Difference{" +
-				"line='" + line + '\'' +
-				", type=" + type +
-				'}';
 	}
 }

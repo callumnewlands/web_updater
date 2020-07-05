@@ -2,6 +2,7 @@ package web_updater.database;
 
 import java.io.IOException;
 import java.util.List;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -10,6 +11,7 @@ import web_updater.Utils;
 import web_updater.model.WebPage;
 
 @Controller
+@Log4j2
 public class UpdateController {
 
 	private static final int SECOND_MS = 1000;
@@ -27,7 +29,7 @@ public class UpdateController {
 	@Async
 	public void checkForUpdates() {
 
-		System.out.println("Start checking for updates");
+		log.info("Start checking for updates");
 
 		List<WebPage> pages = dbController.getAllPages();
 
@@ -46,7 +48,7 @@ public class UpdateController {
 			dbController.savePage(p);
 		});
 
-		System.out.println("Finished checking for updates");
+		log.info("Finished checking for updates");
 
 	}
 }

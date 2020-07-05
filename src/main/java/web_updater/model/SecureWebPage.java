@@ -9,23 +9,22 @@ import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.MapKeyColumn;
 import javax.persistence.PrimaryKeyJoinColumn;
+import lombok.NoArgsConstructor;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import web_updater.security.EncryptionConverter;
 
 @Entity
 @PrimaryKeyJoinColumn(name = "URL")
+@NoArgsConstructor
 public class SecureWebPage extends WebPage {
 
 	@ElementCollection
 	@MapKeyColumn(name = "field")
 	@Column(name = "value")
 	@Convert(attributeName = "value", converter = EncryptionConverter.class)
-	Map<String, String> postData;
+	private Map<String, String> postData;
 	private String loginURL;
-
-	public SecureWebPage() {
-	}
 
 	public SecureWebPage(String url, String loginURL, Map<String, String> postData) {
 		super(url);

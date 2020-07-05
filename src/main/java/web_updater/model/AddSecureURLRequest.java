@@ -1,5 +1,10 @@
 package web_updater.model;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class AddSecureURLRequest extends AddURLRequest {
 
 	private String loginUrl;
@@ -9,19 +14,4 @@ public class AddSecureURLRequest extends AddURLRequest {
 		super();
 	}
 
-	public String getLoginUrl() {
-		return loginUrl;
-	}
-
-	public void setLoginUrl(String loginUrl) {
-		this.loginUrl = loginUrl;
-	}
-
-	public String getPostData() {
-		return postData;
-	}
-
-	public void setPostData(String postData) {
-		this.postData = postData;
-	}
 }
