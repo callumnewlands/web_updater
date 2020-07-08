@@ -25,18 +25,17 @@ jobs:
     name: 'Terraform'
     needs: test
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./terraform
     if: "!contains(github.event.head_commit.message, 'skip-ci')"
     steps:
 
-      - name: PWD && LS
-        run: pwd && ls
-
-      - name: Check Terraform DIR
-        working-directory: terraform
-        run: pwd
-
       - name: Checkout
         uses: actions/checkout@v2
+
+      - name: Check Terraform DIR
+        run: pwd
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
