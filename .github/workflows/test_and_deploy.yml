@@ -28,8 +28,11 @@ jobs:
     if: "!contains(github.event.head_commit.message, 'skip-ci')"
     steps:
 
+      - name: PWD && LS
+        run: pwd && ls
+
       - name: Check Terraform DIR
-        working-directory: ./terraform
+        working-directory: terraform
         run: pwd
 
       - name: Checkout
