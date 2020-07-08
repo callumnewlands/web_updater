@@ -14,14 +14,14 @@ terraform {
 
 provider "heroku" {
   version = "~> 2.5"
-  email = "callumnewlands@goglemail.com"
+  email   = "callumnewlands@goglemail.com"
   api_key = var.heroku_api_key
 }
 
 resource "heroku_app" "website-updater" {
-  name = "website-updater"
+  name   = "website-updater"
   region = "eu"
-  stack = "heroku-18"
+  stack  = "heroku-18"
 
   config_vars = {
     MAVEN_CUSTOM_OPTS = "-P prod -DskipTests"
@@ -29,7 +29,7 @@ resource "heroku_app" "website-updater" {
 
   sensitive_config_vars = {
     DATABASE_URL = var.heroku_database_url
-    DB_SECRET = var.database_secret
+    DB_SECRET    = var.database_secret
   }
 
 }
