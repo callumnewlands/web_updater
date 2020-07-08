@@ -25,14 +25,11 @@ jobs:
     name: 'Terraform'
     needs: test
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: terraform
     if: "!contains(github.event.head_commit.message, 'skip-ci')"
     steps:
 
-      - name: PWD && LS
-        run: pwd && ls -a
+      - name: CD Terraform DIR
+        run: pwd && cd terraform
 
       - name: Checkout
         uses: actions/checkout@v2
