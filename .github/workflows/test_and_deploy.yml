@@ -21,19 +21,19 @@ jobs:
 
       - name: Test with Maven
         run: mvn test --file pom.xml
-
-      - name: PWD && LS
-        run: pwd && ls -a
-
   terraform:
     name: 'Terraform'
     needs: test
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ../terraform
+        working-directory: terraform
     if: "!contains(github.event.head_commit.message, 'skip-ci')"
     steps:
+
+      - name: PWD && LS
+        run: pwd && ls -a
+
       - name: Checkout
         uses: actions/checkout@v2
 
