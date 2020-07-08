@@ -2,6 +2,16 @@
 //    terraform plan
 //    terraform apply
 
+terraform {
+  backend "remote" {
+    organization = "newlands"
+
+    workspaces {
+      name = "web-updater"
+    }
+  }
+}
+
 provider "heroku" {
   version = "~> 2.5"
   email = "callumnewlands@goglemail.com"
