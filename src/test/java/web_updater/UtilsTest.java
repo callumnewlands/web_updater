@@ -89,14 +89,29 @@ class UtilsTest {
 		assertFalse(Utils.areDocumentsEqual(d2, d1));
 	}
 
+	private void testAllPairsOfLinesEqual(String...lines) {
+		final int length = lines.length;
+		for (int i = 0; i < length; i++) {
+			for (int j = i + 1; j < length; j++) {
+				assertTrue(Utils.areLinesEqual(lines[i], lines[j]));
+			}
+		}
+	}
+
+	private void testAllPairsOfLinesNotEqual(String...lines) {
+		final int length = lines.length;
+		for (int i = 0; i < length; i++) {
+			for (int j = i+1; j < length; j++) {
+				assertFalse(Utils.areLinesEqual(lines[i], lines[j]));
+			}
+		}
+	}
+
 	@Test
 	void areLinesEqualReturnsTrueIfStringsEqual() {
 		String s1 = "This is a test string";
 		String s2 = "This is a test string";
-		assertTrue(Utils.areLinesEqual(s1, s1));
-		assertTrue(Utils.areLinesEqual(s1, s2));
-		assertTrue(Utils.areLinesEqual(s2, s1));
-		assertTrue(Utils.areLinesEqual(s2, s2));
+		testAllPairsOfLinesEqual(s1, s2);
 	}
 
 	@Test
@@ -104,15 +119,7 @@ class UtilsTest {
 		String s1 = "This is a test string";
 		String s2 = "This is not a test string";
 		String s3 = "This is also not a test string";
-
-		assertFalse(Utils.areLinesEqual(s1, s2));
-		assertFalse(Utils.areLinesEqual(s2, s1));
-
-		assertFalse(Utils.areLinesEqual(s1, s3));
-		assertFalse(Utils.areLinesEqual(s3, s1));
-
-		assertFalse(Utils.areLinesEqual(s2, s3));
-		assertFalse(Utils.areLinesEqual(s3, s2));
+		testAllPairsOfLinesNotEqual(s1, s2, s3);
 	}
 
 	@Test
@@ -120,15 +127,7 @@ class UtilsTest {
 		String s1 = "This is a test string";
 		String s2 = "This is <!-- not --> a test string";
 		String s3 = "This is <!-- also not --> a test string";
-
-		assertTrue(Utils.areLinesEqual(s1, s2));
-		assertTrue(Utils.areLinesEqual(s2, s1));
-
-		assertTrue(Utils.areLinesEqual(s1, s3));
-		assertTrue(Utils.areLinesEqual(s3, s1));
-
-		assertTrue(Utils.areLinesEqual(s2, s3));
-		assertTrue(Utils.areLinesEqual(s3, s2));
+		testAllPairsOfLinesEqual(s1, s2, s3);
 	}
 
 	@Test
@@ -136,15 +135,7 @@ class UtilsTest {
 		String s1 = "This is a test string";
 		String s2 = "This is 23:14 a test string";
 		String s3 = "This is 22:10:00 a test string";
-
-		assertTrue(Utils.areLinesEqual(s1, s2));
-		assertTrue(Utils.areLinesEqual(s2, s1));
-
-		assertTrue(Utils.areLinesEqual(s1, s3));
-		assertTrue(Utils.areLinesEqual(s3, s1));
-
-		assertTrue(Utils.areLinesEqual(s2, s3));
-		assertTrue(Utils.areLinesEqual(s3, s2));
+		testAllPairsOfLinesEqual(s1, s2, s3);
 	}
 
 	@Test
@@ -152,15 +143,8 @@ class UtilsTest {
 		String s1 = "This is a test string";
 		String s2 = "This is timestamp 1240929 a test string";
 		String s3 = "This is Timestamp : 09123894 a test string";
-
-		assertTrue(Utils.areLinesEqual(s1, s2));
-		assertTrue(Utils.areLinesEqual(s2, s1));
-
-		assertTrue(Utils.areLinesEqual(s1, s3));
-		assertTrue(Utils.areLinesEqual(s3, s1));
-
-		assertTrue(Utils.areLinesEqual(s2, s3));
-		assertTrue(Utils.areLinesEqual(s3, s2));
+		String s4 = "This is a test string about 9 hours ago";
+		testAllPairsOfLinesEqual(s1, s2, s4);
 	}
 
 	@Test
@@ -168,15 +152,7 @@ class UtilsTest {
 		String s1 = "This is a test string";
 		String s2 = "This is         a test string";
 		String s3 = "This    is a     test  string";
-
-		assertTrue(Utils.areLinesEqual(s1, s2));
-		assertTrue(Utils.areLinesEqual(s2, s1));
-
-		assertTrue(Utils.areLinesEqual(s1, s3));
-		assertTrue(Utils.areLinesEqual(s3, s1));
-
-		assertTrue(Utils.areLinesEqual(s2, s3));
-		assertTrue(Utils.areLinesEqual(s3, s2));
+		testAllPairsOfLinesEqual(s1, s2, s3);
 	}
 
 	@Test
@@ -185,24 +161,17 @@ class UtilsTest {
 		String s2 = "This is 2010-09-11 a test string";
 		String s3 = "This is 06/14/20 a test string";
 		String s4 = "This is 14/06/1945 a test string";
+		String s5 = "This is Thursday July 2nd a test string";
+		testAllPairsOfLinesEqual(s1, s2, s3, s4, s5);
+	}
 
-		assertTrue(Utils.areLinesEqual(s1, s2));
-		assertTrue(Utils.areLinesEqual(s2, s1));
-
-		assertTrue(Utils.areLinesEqual(s1, s3));
-		assertTrue(Utils.areLinesEqual(s3, s1));
-
-		assertTrue(Utils.areLinesEqual(s1, s4));
-		assertTrue(Utils.areLinesEqual(s4, s1));
-
-		assertTrue(Utils.areLinesEqual(s2, s3));
-		assertTrue(Utils.areLinesEqual(s3, s2));
-
-		assertTrue(Utils.areLinesEqual(s2, s4));
-		assertTrue(Utils.areLinesEqual(s4, s2));
-
-		assertTrue(Utils.areLinesEqual(s3, s4));
-		assertTrue(Utils.areLinesEqual(s4, s3));
+	@Test
+	void areLinesEqualReturnsTrueForDateTimeDifferences() {
+		String s1 = "This is a test string";
+		String s2 = "This is Sun Jun 28 16:55:35 2020 a test string";
+		String s3 = "This is 2020-07-12T20:29:04.079Z a test string";
+		String s4 = "This is Thu 2 Jul 2020 20:25:33 a test string";
+		testAllPairsOfLinesEqual(s1, s2, s3, s4);
 	}
 
 	@ParameterizedTest

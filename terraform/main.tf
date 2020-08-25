@@ -1,7 +1,3 @@
-// Run:
-//    terraform plan
-//    terraform apply
-
 terraform {
   backend "remote" {
     organization = "newlands"
@@ -31,5 +27,13 @@ resource "heroku_app" "website-updater" {
     DATABASE_URL = var.heroku_database_url
     DB_SECRET    = var.database_secret
   }
+}
 
+resource "heroku_build" "website-updater" {
+  app        = heroku_app.website-updater.name
+  buildpacks = ["heroku/java"]
+
+  source = {
+    url = "https://github.com/callumnewlands/web_updater/tree/master"
+  }
 }

@@ -41,26 +41,21 @@ public final class Utils {
 		return true;
 	}
 
-	// TODO
-	//	  <p align="right"> auto-generated at Sun Jun 28 16:55:35 BST 2020 </p>
-	//	  <p align="right"> auto-generated at Thu Jul 2 20:25:33 BST 2020 </p>
-	// 	  <p align="right"> auto-generated at Fri Jul 3 12:25:34 BST 2020 </p>
-
-
-	// TODO
-	//	  &nbsp;•&nbsp;Feedback on Coursework<small style="color:#999"> - about 9 hours ago3
-	//	  &nbsp;•&nbsp;Feedback on Coursework<small style="color:#999"> - 11:29 AM, Thursday July 2nd
 	private static String removeDatesTimesCommentsWhitespace(final String str) {
 
-		final String TIME_PATTERN = "(?:\\d|[01]\\d|2[0-3]):[0-5]\\d(:[0-5]\\d)?|([Tt]imestamp\\s*[-:]?\\s*\\d\\d*\\.?\\d\\d*)";
+		final String TIME_PATTERN = "[Tt]?(?:\\d|[01]\\d|2[0-3]):[0-5]\\d(:[0-5]\\d)?(.\\d+)?[Zz]?|" +
+				"([Tt]imestamp\\s*[-:]?\\s*\\d\\d*\\.?\\d\\d*)|" +
+				"(([Aa]bout)?\\s*\\d+\\s*([Mm]inute(s?)|[Hh]our(s?)|[Dd]ay(s?))\\s([Aa]go)?)";
 
-		final String DATE_PATTERN_YYYY_MM_DD = "((19|20)\\d\\d[- /.](0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01]))";
-		final String DATE_PATTERN_MM_DD_YY = "((0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])[- /.](19|20)?\\d\\d)";
-		final String DATE_PATTERN_DD_MM_YY = "((0[1-9]|[12][0-9]|3[01])[- /.](0[1-9]|1[012])[- /.](19|20)?\\d\\d)";
+		final String SEPARATOR_PATTERN = "[-\\s*/.]";
+		final String DAY_OF_MONTH_PATTERN = "(([12][0-9]|3[01]|0?[1-9])(st|nd|th)?)";
+		final String DATE_PATTERN_YYYY_MM_DD = "((19|20)\\d\\d" + SEPARATOR_PATTERN + "(0[1-9]|1[012])" + SEPARATOR_PATTERN + DAY_OF_MONTH_PATTERN;
+		final String DATE_PATTERN_MM_DD_YY = "((0[1-9]|1[012])" + SEPARATOR_PATTERN + DAY_OF_MONTH_PATTERN + SEPARATOR_PATTERN + "(19|20)?\\d\\d)";
+		final String DATE_PATTERN_DD_MM_YY = DAY_OF_MONTH_PATTERN + SEPARATOR_PATTERN + "(0[1-9]|1[012])" + SEPARATOR_PATTERN + "(19|20)?\\d\\d)";
 		final String DATE_PATTERN_DAY = "(([Mm])on|([Tt])ue(s)?|([Ww])ed(nes)?|([Tt])hu(rs)?|([Ff])ri|([Ss])at(ur)?|([Ss])un)(day)?";
 		final String DATE_PATTERN_MONTH = "(Jan(uary)?|Feb(ruary)?|Mar(ch)?|Apr(il)?|May|Jun(e)?|Jul(y)?|Aug(ust)?|Sep(tember)?|Oct(ober)?|Nov(ember)?|Dec(ember))";
 		final String LONG_DATE_PATTERN =
-				"(" + DATE_PATTERN_DAY + "[- /.]?(0[1-9]|[12][0-9]|3[01])?[- /.]?" + DATE_PATTERN_MONTH + "[- /.]?(0[1-9]|[12][0-9]|3[01])?[- /.]?)";
+				"(" + DATE_PATTERN_DAY + SEPARATOR_PATTERN + "?(" + DATE_PATTERN_MONTH + ")?"  + SEPARATOR_PATTERN +  "?" + DAY_OF_MONTH_PATTERN  + SEPARATOR_PATTERN + "?(" + DATE_PATTERN_MONTH + ")?"  + SEPARATOR_PATTERN + "?\\d*)";
 		final String DATE_PATTERN =
 				DATE_PATTERN_YYYY_MM_DD + "|" + DATE_PATTERN_MM_DD_YY + "|" + DATE_PATTERN_DD_MM_YY + "|" + LONG_DATE_PATTERN;
 
